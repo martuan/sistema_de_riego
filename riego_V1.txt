@@ -1,0 +1,213 @@
+#include <WiFi.h>
+#include "time.h"
+
+
+#define OUTPUT1 15
+#define OUTPUT2 22
+#define FLASH 4
+
+
+#define LED 2 //On Board LED
+
+//uint32_t time = 2000;
+#define time 2000
+
+//enum salidas {OUTPUT1,OUTPUT2,OUTPUT3,OUTPUT4}salida;
+
+const char* ssid     = "milton";
+const char* password = "paternal";
+
+hw_timer_t * timer;
+
+//**** NTP CONFIG (hora mundial) ********
+const char* ntpServer = "pool.ntp.org";//server del rtc global
+const long  gmtOffset_sec = -10800;//3600;
+const int   daylightOffset_sec = 0;//3600;
+
+struct tm timeStamp;
+
+char timeYear[10];
+char timeMonth[10];
+char timeDayName[10];
+char timeDayNumber[10];
+char timeHour24[10];
+char timeHour12[10];
+char timeMinute[10];
+char timeSecond[10];
+char fechaHora[50];
+String tiempoConfiguradoON1 = {};
+String tiempoConfiguradoOFF1 = {};
+String tiempoActual = {};
+//**** NTP CONFIG (hora mundial) ********
+
+
+
+
+char flagTimer = 0;
+int contadorTimer = 0;
+char flagProceso1 = 0;
+char flagProceso2 = 0;
+int contadorProceso1 = 0;
+int contadorProceso2 = 0;
+int tiempo1 = 1;
+int tiempo2 = 1;
+int milisegundos = 1000;//1 segundo
+
+
+void accionarSalidas(void);
+
+
+
+//timer de usos generales 1ms
+void IRAM_ATTR onTimer() {
+
+    contadorProceso1++;
+    contadorProceso2++;
+
+    if(contadorProceso1 == tiempo1){//proceso 1
+        contadorProceso1 = 0;//resetea el contador
+        flagProceso1 = 1;        
+        //Serial.println("flagProceso1");
+    }
+    if(contadorProceso2 == tiempo2){//proceso 2
+        contadorProceso1 = 0;//resetea el contador
+        //contadorProceso2 = 0;//resetea el contador
+        flagProceso2 = 1; 
+        //Serial.println("flagProceso2");
+    }
+}
+
+void setup(){
+
+
+    Serial.begin(115200);
+    Serial.println("Sistema de riego Encendido");
+    
+    
+    pinMode(OUTPUT1, OUTPUT);
+    pinMode(OUTPUT2, OUTPUT);
+    pinMode(LED, OUTPUT);
+    pinMode(FLASH, OUTPUT);
+    
+    
+    //configuración de timer para usos generales // 1ms
+    timer = timerBegin(2, 80, true);
+    timerAttachInterrupt(timer, &onTimer, true);
+    //timerAlarmWrite(timer, 1000, true);//valor en microsegundos
+    timerAlarmWrite(timer, milisegundos * 1000, true);//valor en microsegundos
+    timerAlarmEnable(timer);
+
+    
+
+    // Connect to Wi-Fi
+    Serial.print("Connecting to ");
+    Serial.println(ssid);
+    
+    WiFi.begin(ssid, password);
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(500);
+        Serial.print(".");
+    }
+    Serial.println("");
+    Serial.println("WiFi connected.");
+
+    //init and get the time
+    configTime(gmtOffset_sec, daylightOffset_sec, ntpServer);
+
+    tiempoConfiguradoON1 = "20:55:00";
+    tiempoConfiguradoOFF1 = "20:56:00";
+    
+
+}
+
+void loop(){
+
+ 
+    if(flagProceso1){//si el timer alcanzó el tiempo para encender la electroválvula
+        Serial.println("flagProceso1");
+        flagProceso1 = 0;
+        
+        digitalWrite(OUTPUT1, HIGH);
+        //digitalWrite(FLASH, HIGH);
+        //accionarSalidas();
+        obtenerFechaHora();
+        Serial.println(fechaHora);
+        Serial.println(tiempoActual);
+    }
+    if(flagProceso2){//si el timer alcanzó el tiempo para apagar la electroválvula
+        Serial.println("flagProceso2");
+        flagProceso2 = 0;
+
+        digitalWrite(OUTPUT1, LOW);
+        //digitalWrite(FLASH, LOW);
+        //accionarSalidas();
+    }
+/*
+    Serial.print(timeHour24);
+    Serial.print(":");
+    Serial.print(timeMinute);
+    Serial.print(":");
+    Serial.println(timeSecond); 
+*/
+    
+
+    if(tiempoActual == tiempoConfiguradoON1){
+
+        digitalWrite(FLASH, HIGH);
+
+    }
+    if(tiempoActual == tiempoConfiguradoOFF1){
+
+        digitalWrite(FLASH, LOW);
+
+    }
+
+    
+}
+
+void accionarSalidas(void){
+
+
+        digitalWrite(OUTPUT1, HIGH);
+        delay(2000);
+        digitalWrite(OUTPUT1, LOW);
+        
+
+}
+
+//realiza la lectura del timestamp desde el server ntp
+void obtenerFechaHora(void){
+
+  if(!getLocalTime(&timeStamp)){
+      Serial.println("Failed to obtain time");
+  }else{
+
+      //guarda cada componente del timeStamp en variables
+      strftime(timeYear,10, "%Y", &timeStamp);
+      strftime(timeMonth,10, "%B", &timeStamp);
+      strftime(timeDayName,10, "%A", &timeStamp);
+      strftime(timeDayNumber,10, "%d", &timeStamp);
+      strftime(timeHour24,10, "%H", &timeStamp);   
+      strftime(timeHour12,10, "%I", &timeStamp);
+      strftime(timeMinute,10, "%M", &timeStamp);
+      strftime(timeSecond,10, "%S", &timeStamp);
+      
+      strcpy(fechaHora, "");//borra el contenido del string
+
+      //arma un string con los componentes que interesan
+      strcat(fechaHora, timeYear);
+      strcat(fechaHora, " ");
+      strcat(fechaHora, timeMonth);
+      strcat(fechaHora, " ");
+      strcat(fechaHora, timeDayNumber);
+      strcat(fechaHora, " ");
+      strcat(fechaHora, timeHour24);
+      strcat(fechaHora, ":");
+      strcat(fechaHora, timeMinute);
+      strcat(fechaHora, ":");
+      strcat(fechaHora, timeSecond);
+
+      tiempoActual = String(timeHour24) + ":" + String(timeMinute) + ":" + String(timeSecond);
+
+  }
+}
