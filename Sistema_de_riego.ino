@@ -54,7 +54,7 @@ String password = "paternal";
 
 WiFiManager wm;
 
-
+/*
 
 // Set your Static IP address
 IPAddress local_IP(192, 168, 1, 184);
@@ -65,7 +65,7 @@ IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 0, 0);
 IPAddress primaryDNS(8, 8, 8, 8);   //optional
 IPAddress secondaryDNS(8, 8, 4, 4); //optional
-
+*/
 
 WiFiClient espClient1;
 PubSubClient client1(espClient1);
@@ -134,8 +134,9 @@ char flagProceso2 = 0;
 int contadorProceso1 = 0;
 int contadorProceso2 = 0;
 int tiempo1 = 1;
-int tiempo2 = 1;
+int tiempo2 = 10;
 int milisegundos = 1000;//1 segundo
+String macAdd = {};
 
 
 //Servidor en la nube
@@ -145,6 +146,8 @@ const char *mqtt_user = "";
 const char *mqtt_pass = "";
 char root_topic_subscribe[100] = "riegoARG/equipo_1";//"undefi";
 char root_topic_publish[100] = "riegoARG/equipo_1";//"undefi";
+//String root_topic_subscribe = "riegoARG/equipo_1";//"undefi";
+//String root_topic_publish = "riegoARG/equipo_1";//"undefi";
 
 //**************************************
 //*********** BLUETOOTH  *****************
@@ -224,6 +227,10 @@ void setup(){
     Serial.println("Sistema de riego Encendido");
 
     SerialBT.begin("riegoARG"); //Bluetooth device name
+
+	macAdd = WiFi.macAddress();
+    Serial.println( "MAC address: " + macAdd );
+	cambiarConfigMQTT(1);
     
     
     pinMode(OUTPUT1, OUTPUT);
@@ -370,6 +377,22 @@ void loop(){
 
     }
 
+
+	if(flagProceso2 && flagConexionOK == 0){
+
+		flagProceso2 = 0;
+
+		Serial.println("Intentando recuperar la conexión");
+		comprobarConexion();//si alguna conexión se perdió, la reestablece
+		if(flagConexionOK){//si la recuperó
+			Serial.print("Se ha recuperado la conexión. flagConexionOK = ");
+			Serial.println(flagConexionOK);
+		}else{//si no la recuperó
+		
+			Serial.print("[PROBLEMAS] No se ha recuperado la conexión. flagConexionOK = ");
+			Serial.println(flagConexionOK);
+		}
+	}
 
     /*
     if(flagProceso2){//si el timer alcanzó el tiempo para apagar la electroválvula
@@ -564,7 +587,7 @@ String htmlToSend = startHtml + "<div class='autoMargin'>" +"<form action = '/me
   server.send(200, "text/html", htmlToSend);
 */
 
-	horaON1 = server.arg(0);
+  horaON1 = server.arg(0);
   minutoON1 = server.arg(1);
   horaOFF1 = server.arg(2);
   minutoOFF1 = server.arg(3);
@@ -799,6 +822,169 @@ void handleMenu() {
   
 
 	String htmlToSend = startHtml + "<div class='autoMargin'>" + "<h1>Men&uacute</h1>" + "<form action = '/' method = 'POST'>\
+<fieldset>\
+	<legend>Preset 1</legend>\
+		<table>\
+			<tr>\
+				<td>\
+					<label for='horaON1'>HoraON1:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaON1' name='horaON1' min='00' 	max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoON1'>MinutoON1:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoON1' name='minutoON1' min='00' max='59'>\
+				</td>\
+			</tr>\
+			<tr>\
+				<td>\
+					<label for='horaOFF1'>HoraOFF1:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaOFF1' name='horaOFF1' min='00' max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoOFF1'>MinutoOFF1:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoOFF1' name='minutoOFF1' min='00' max='59'>\
+				</td>\
+			</tr>\
+		</table>\
+</fieldset>\
+\
+<fieldset>\
+	<legend>Preset 2</legend>\
+		<table>\
+			<tr>\
+				<td>\
+					<label for='horaON2'>HoraON2:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaON2' name='horaON2' min='00' 	max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoON2'>MinutoON2:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoON2' name='minutoON2' min='00' max='59'>\
+				</td>\
+			</tr>\
+			<tr>\
+				<td>\
+					<label for='horaOFF2'>HoraOFF2:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaOFF2' name='horaOFF2' min='00' max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoOFF2'>MinutoOFF2:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoOFF2' name='minutoOFF2' min='00' max='59'>\
+				</td>\
+			</tr>\
+		</table>\
+</fieldset>\
+\
+<fieldset>\
+	<legend>Preset 3</legend>\
+		<table>\
+			<tr>\
+				<td>\
+					<label for='horaON3'>HoraON3:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaON3' name='horaON3' min='00' 	max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoON3'>MinutoON3:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoON3' name='minutoON3' min='00' max='59'>\
+				</td>\
+			</tr>\
+			<tr>\
+				<td>\
+					<label for='horaOFF3'>HoraOFF3:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaOFF3' name='horaOFF3' min='00' max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoOFF3'>MinutoOFF3:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoOFF3' name='minutoOFF3' min='00' max='59'>\
+				</td>\
+			</tr>\
+		</table>\
+</fieldset>\
+\
+<fieldset>\
+	<legend>Preset 4</legend>\
+		<table>\
+			<tr>\
+				<td>\
+					<label for='horaON4'>HoraON4:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaON4' name='horaON4' min='00' 	max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoON4'>MinutoON4:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoON4' name='minutoON4' min='00' max='59'>\
+				</td>\
+			</tr>\
+			<tr>\
+				<td>\
+					<label for='horaOFF4'>HoraOFF4:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaOFF4' name='horaOFF4' min='00' max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoOFF4'>MinutoOFF4:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoOFF4' name='minutoOFF4' min='00' max='59'>\
+				</td>\
+			</tr>\
+		</table>\
+</fieldset>\
+\
+                        <input type='checkbox' name='preset1' value='ON'>\
+                        <label for='preset1'> Activar preset 1</label><br>\
+                        <input type='checkbox' name='preset2' value='ON'>\
+                        <label for='preset2'> Activar preset 2</label><br>\
+                        <input type='checkbox' name='preset3' value='ON'>\
+                        <label for='preset3'> Activar preset 3</label><br>\
+                        <input type='checkbox' name='preset4' value='ON'>\
+                        <label for='preset4'> Activar preset 4</label><br>\
+                        <br>\
+						<p>Nota: solo se modificar&aacuten los presets chequeados</p>\
+						<p>Aquellos presets no chequeados (en blanco) mantendr&aacuten la configuraci&oacuten establecida previamente</p>\
+						<br>\
+                        <input type='submit' value='Aceptar'>\
+                      </form>" + "</div>" + endHtml;
+
+
+  server.send(200, "text/html", htmlToSend);
+  //delay(500);
+  //digitalWrite(led, 0);
+}
+
+
+void handleMenu_old() {
+  
+  
+
+	String htmlToSend = startHtml + "<div class='autoMargin'>" + "<h1>Men&uacute</h1>" + "<form action = '/' method = 'POST'>\
                         <fieldset>\
                         <legend>Preset 1</legend>\
                           <label for='horaON1'>HoraON1:</label>\
@@ -810,6 +996,39 @@ void handleMenu() {
                           <label for='minutoOFF1'>MinutoOFF1:</label>\
                           <input type='number' id='minutoOFF1' name='minutoOFF1' min='00' max='59'>\
                         </fieldset>\
+<fieldset>\
+	<legend>Preset 1</legend>\
+		<table>\
+			<tr>\
+				<td>\
+					<label for='horaON1'>HoraON1:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaON1' name='horaON1' min='00' 	max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoON1'>MinutoON1:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoON1' name='minutoON1' min='00' max='59'>\
+				</td>\
+			</tr>\
+			<tr>\
+				<td>\
+					<label for='horaOFF1'>HoraOFF1:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='horaOFF1' name='horaOFF1' min='00' max='23'>\
+				</td>\
+				<td>\
+					<label for='minutoOFF1'>MinutoOFF1:</label>\
+				</td>\
+				<td>\
+					<input type='number' id='minutoOFF1' name='minutoOFF1' min='00' max='59'>\
+				</td>\
+			</tr>\
+		</table>\
+</fieldset>\
                         \
                         <fieldset>\
                         <legend>Preset 2</legend>\
@@ -867,7 +1086,6 @@ void handleMenu() {
   //delay(500);
   //digitalWrite(led, 0);
 }
-
 void handleReset(){
 
   tiempoConfiguradoON1 = "--:--:--";
@@ -910,6 +1128,7 @@ void handleReset(){
   server.send(200, "text/html", htmlToSend);
 
 }
+
 
 void handleNotFound() {
   digitalWrite(led, 1);
@@ -1315,4 +1534,53 @@ void cambioDeParametros(void){
     }
   }
 
+}
+
+void cambiarConfigMQTT(uint8_t numSensor){
+
+
+/*
+	String root_topic_publishStr = (String)root_topic_publish + macAdd;
+	Serial.print("root_topic_publishStr: ");
+	Serial.println(root_topic_publishStr);
+
+	String root_topic_subscribeStr = (String)root_topic_subscribe + macAdd;
+	Serial.print("root_topic_subscribeStr: ");
+	Serial.println(root_topic_subscribeStr);
+
+	String root_topic = "riegoARG/";
+
+	root_topic_subscribe = root_topic + macAdd;
+	root_topic_publish = root_topic + macAdd;
+
+*/
+
+	char strTopico[80] = "riegoARG/";
+
+	strcpy(root_topic_publish, strTopico);
+	strcat(root_topic_publish, macAdd.c_str());
+	strcpy(root_topic_subscribe, strTopico);
+	strcat(root_topic_subscribe, macAdd.c_str());
+
+	Serial.println();
+	Serial.println("******************************************");
+	Serial.print("root_topic_publish: ");
+  	Serial.println(root_topic_publish);
+  	Serial.println("******************************************");
+	Serial.println();
+
+	Serial.println();
+	Serial.println("******************************************");
+	Serial.print("root_topic_subscribe: ");
+  	Serial.println(root_topic_subscribe);
+  	Serial.println("******************************************");
+	Serial.println();
+
+
+}
+
+void comprobarConexion(void){
+
+  setupModoRed();//configura MQTT, revisa conectividad
+ 
 }
