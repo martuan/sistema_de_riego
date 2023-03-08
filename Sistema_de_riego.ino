@@ -394,6 +394,8 @@ void loop(){
 		}
 	}
 
+
+
     /*
     if(flagProceso2){//si el timer alcanzó el tiempo para apagar la electroválvula
         Serial.println("flagProceso2");
