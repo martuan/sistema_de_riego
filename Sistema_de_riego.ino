@@ -134,9 +134,10 @@ char flagProceso2 = 0;
 int contadorProceso1 = 0;
 int contadorProceso2 = 0;
 int tiempo1 = 1;
-int tiempo2 = 10;
+int tiempo2 = 60;
 int milisegundos = 1000;//1 segundo
 String macAdd = {};
+char msgKeepAlive[150] = {};
 
 
 //Servidor en la nube
@@ -146,6 +147,7 @@ const char *mqtt_user = "";
 const char *mqtt_pass = "";
 char root_topic_subscribe[100] = "riegoARG/equipo_1";//"undefi";
 char root_topic_publish[100] = "riegoARG/equipo_1";//"undefi";
+char keepAlive_topic_publish[100] = "riegoARG/keepAlive";
 //String root_topic_subscribe = "riegoARG/equipo_1";//"undefi";
 //String root_topic_publish = "riegoARG/equipo_1";//"undefi";
 
@@ -213,7 +215,7 @@ void IRAM_ATTR onTimer() {
         //Serial.println("flagProceso1");
     }
     if(contadorProceso2 == tiempo2){//proceso 2
-        contadorProceso1 = 0;//resetea el contador
+        contadorProceso2 = 0;//resetea el contador
         //contadorProceso2 = 0;//resetea el contador
         flagProceso2 = 1; 
         //Serial.println("flagProceso2");
@@ -378,21 +380,34 @@ void loop(){
     }
 
 
-	if(flagProceso2 && flagConexionOK == 0){
+	if(flagProceso2){//chequea cada cierto tiempo la conexión
 
+		Serial.println("flagProceso2");
 		flagProceso2 = 0;
 
-		Serial.println("Intentando recuperar la conexión");
-		comprobarConexion();//si alguna conexión se perdió, la reestablece
-		if(flagConexionOK){//si la recuperó
-			Serial.print("Se ha recuperado la conexión. flagConexionOK = ");
-			Serial.println(flagConexionOK);
-		}else{//si no la recuperó
-		
-			Serial.print("[PROBLEMAS] No se ha recuperado la conexión. flagConexionOK = ");
-			Serial.println(flagConexionOK);
+		if(client1.connected()){
+        	publicarKeepAlive();
+      	}
+
+		if(flagConexionOK == 0){//si perdió la conexión
+
+			Serial.println("Intentando recuperar la conexión");
+			comprobarConexion();//si alguna conexión se perdió, la reestablece
+			if(flagConexionOK){//si la recuperó
+				Serial.print("Se ha recuperado la conexión. flagConexionOK = ");
+				Serial.println(flagConexionOK);
+			}else{//si no la recuperó
+			
+				Serial.print("[PROBLEMAS] No se ha recuperado la conexión. flagConexionOK = ");
+				Serial.println(flagConexionOK);
+			}
+
 		}
+
+		
 	}
+
+
 
     /*
     if(flagProceso2){//si el timer alcanzó el tiempo para apagar la electroválvula
@@ -1556,11 +1571,14 @@ void cambiarConfigMQTT(uint8_t numSensor){
 */
 
 	char strTopico[80] = "riegoARG/";
+	char strTopicoKeepAlive[80] = "riegoARG/keepAlive/";
 
 	strcpy(root_topic_publish, strTopico);
 	strcat(root_topic_publish, macAdd.c_str());
 	strcpy(root_topic_subscribe, strTopico);
 	strcat(root_topic_subscribe, macAdd.c_str());
+	strcpy(keepAlive_topic_publish, strTopicoKeepAlive);
+	strcat(keepAlive_topic_publish, macAdd.c_str());
 
 	Serial.println();
 	Serial.println("******************************************");
@@ -1576,6 +1594,13 @@ void cambiarConfigMQTT(uint8_t numSensor){
   	Serial.println("******************************************");
 	Serial.println();
 
+	Serial.println();
+	Serial.println("******************************************");
+	Serial.print("keepAlive_topic_publish: ");
+  	Serial.println(keepAlive_topic_publish);
+  	Serial.println("******************************************");
+	Serial.println();
+
 
 }
 
@@ -1583,4 +1608,17 @@ void comprobarConexion(void){
 
   setupModoRed();//configura MQTT, revisa conectividad
  
+}
+
+void publicarKeepAlive(void){
+  
+  strcpy(msgKeepAlive, "");//borra el contenido del string
+  strcat(msgKeepAlive, "...Estoy vivo. ");
+
+  strcat(msgKeepAlive, keepAlive_topic_publish);
+
+  client1.publish(keepAlive_topic_publish, msgKeepAlive);
+  Serial.println(keepAlive_topic_publish);
+  Serial.println(msgKeepAlive);
+
 }
