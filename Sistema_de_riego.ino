@@ -54,6 +54,7 @@ String password = "paternal";
 
 WiFiManager wm;
 
+<<<<<<< HEAD
 /*
 
 // Set your Static IP address
@@ -66,6 +67,8 @@ IPAddress subnet(255, 255, 0, 0);
 IPAddress primaryDNS(8, 8, 8, 8);   //optional
 IPAddress secondaryDNS(8, 8, 4, 4); //optional
 */
+=======
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
 
 WiFiClient espClient1;
 PubSubClient client1(espClient1);
@@ -133,10 +136,20 @@ char flagProceso1 = 0;
 char flagProceso2 = 0;
 int contadorProceso1 = 0;
 int contadorProceso2 = 0;
+<<<<<<< HEAD
+int tiempo1 = 1;//segundos
+int tiempo2 = 60;//segundos
+=======
 int tiempo1 = 1;
+<<<<<<< HEAD
 int tiempo2 = 10;
 int milisegundos = 1000;//1 segundo
 String macAdd = {};
+=======
+int tiempo2 = 1;
+>>>>>>> 58548f97e71f60104c5fe56c61064e157024e7fc
+int milisegundos = 1000;//1 segundo
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
 
 
 //Servidor en la nube
@@ -146,8 +159,11 @@ const char *mqtt_user = "";
 const char *mqtt_pass = "";
 char root_topic_subscribe[100] = "riegoARG/equipo_1";//"undefi";
 char root_topic_publish[100] = "riegoARG/equipo_1";//"undefi";
+<<<<<<< HEAD
 //String root_topic_subscribe = "riegoARG/equipo_1";//"undefi";
 //String root_topic_publish = "riegoARG/equipo_1";//"undefi";
+=======
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
 
 //**************************************
 //*********** BLUETOOTH  *****************
@@ -227,10 +243,13 @@ void setup(){
     Serial.println("Sistema de riego Encendido");
 
     SerialBT.begin("riegoARG"); //Bluetooth device name
+<<<<<<< HEAD
 
 	macAdd = WiFi.macAddress();
     Serial.println( "MAC address: " + macAdd );
 	cambiarConfigMQTT(1);
+=======
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
     
     
     pinMode(OUTPUT1, OUTPUT);
@@ -377,7 +396,15 @@ void loop(){
 
     }
 
+    if(flagProceso2 && flagConexionOK == 0){//si el timer alcanzó el tiempo para chequear la conexión
+        Serial.println("flagProceso2");
+        flagProceso2 = 0;
 
+<<<<<<< HEAD
+        setupModoRed();
+    }
+=======
+<<<<<<< HEAD
 	if(flagProceso2 && flagConexionOK == 0){
 
 		flagProceso2 = 0;
@@ -396,6 +423,9 @@ void loop(){
 
 
 
+=======
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
+>>>>>>> 58548f97e71f60104c5fe56c61064e157024e7fc
     /*
     if(flagProceso2){//si el timer alcanzó el tiempo para apagar la electroválvula
         Serial.println("flagProceso2");
@@ -516,11 +546,1583 @@ void cargarDesdeEEPROM(void){
 
 }
 
+<<<<<<< HEAD
 
 
 void handleRoot() {
 
 /*
+=======
+void writeString(char add,String data)
+{
+  int _size = data.length();
+  int i;
+  for(i=0;i<_size;i++)
+  {
+    EEPROM.write(add+i,data[i]);
+  }
+  EEPROM.write(add+_size,'\0');   //Add termination null character for String Data
+  EEPROM.commit();
+}
+
+
+String read_String(char add)
+{
+  int i;
+  char data[100]; //Max 100 Bytes
+  int len=0;
+  unsigned char k;
+  k=EEPROM.read(add);
+  while(k != '\0' && len<500)   //Read until null character
+  {    
+    k=EEPROM.read(add+len);
+    data[len]=k;
+    len++;
+  }
+  data[len]='\0';
+  return String(data);
+}
+
+void handleRoot2() {
+  //digitalWrite(led, 1);
+  /*
+  String htmlToSend = startHtml + "<form action = '/menu' method = 'POST'>\
+                        <label for='horaON1'>HoraON1:</label><br>\
+                        <input type='text' id='horaON1' name='horaON1' value=''><br>\
+                        <label for='minutoON1'>MinutoON1:</label><br>\
+                        <input type='text' id='minutoON1' name='minutoON1' value=''><br><br>\
+                        <label for='horaOFF1'>HoraOFF1:</label><br>\
+                        <input type='text' id='horaOFF1' name='horaOFF1' value=''><br>\
+                        <label for='minutoOFF1'>MinutoOFF1:</label><br>\
+                        <input type='text' id='minutoOFF1' name='minutoOFF1' value=''><br><br>\
+                        <input type='submit' value='Aceptar'>\
+                      </form>" + endHtml;
+*/
+/*
+String htmlToSend = startHtml + "<form action = '/menu' method = 'POST'>\
+                        <label for='horaON1'>HoraON1:</label>\
+                          <select name='horaON1' id='horaON1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON1'>MinutoON1:</label>\
+                        <select name='minutoON1' id='minutoON1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                        <label for='horaOFF1'>HoraOFF1:</label>\
+                          <select name='horaOFF1' id='horaOFF1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF1'>MinutoOFF1:</label>\
+                        <select name='minutoOFF1' id='minutoOFF1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>\
+                          <label for='horaON2'>HoraON2:</label>\
+                          <select name='horaON2' id='horaON2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON2'>MinutoON2:</label>\
+                        <select name='minutoON2' id='minutoON2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <label for='horaOFF2'>HoraOFF2:</label>\
+                          <select name='horaOFF2' id='horaOFF2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF2'>MinutoOFF2:</label>\
+                        <select name='minutoOFF2' id='minutoOFF2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>\
+                        <label for='horaON3'>HoraON3:</label>\
+                          <select name='horaON3' id='horaON3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>"
+                          +
+                          /*
+                        <label for='minutoON3'>MinutoON3:</label>\
+                        <select name='minutoON3' id='minutoON3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>"
+                          
+                          "<label for='horaOFF3'>HoraOFF3:</label>\
+                          <select name='horaOFF3' id='horaOFF3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF3'>MinutoOFF3:</label>\
+                        <select name='minutoOFF3' id='minutoOFF3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>\
+                          
+                         +
+                          "<label for='horaON4'>HoraON4:</label>\
+                          <select name='horaON4' id='horaON4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON4'>MinutoON4:</label>\
+                        <select name='minutoON4' id='minutoON4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                        <label for='horaOFF4'>HoraOFF4:</label>\
+                          <select name='horaOFF4' id='horaOFF4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF4'>MinutoOFF4:</label>\
+                        <select name='minutoOFF4' id='minutoOFF4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <input type='checkbox' name='preset1' value='ON'>\
+                          <label for='preset1'> Activar preset 1</label><br>\
+                          <input type='checkbox' name='preset2' value='ON'>\
+                          <label for='preset2'> Activar preset 2</label><br>\
+                          <input type='checkbox' name='preset3' value='ON'>\
+                          <label for='preset3'> Activar preset 3</label><br>\
+                          <input type='checkbox' name='preset4' value='ON'>\
+                          <label for='preset4'> Activar preset 4</label><br>\
+                          <br>\
+                        <input type='submit' value='Aceptar'>\
+                      </form>" + endHtml;
+*/
+/*
+  String preset1html = "<form action = '/menu' method = 'POST'>\
+                        <label for='horaON1'>HoraON1:</label>\
+                          <select name='horaON1' id='horaON1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON1'>MinutoON1:</label>\
+                        <select name='minutoON1' id='minutoON1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                        <label for='horaOFF1'>HoraOFF1:</label>\
+                          <select name='horaOFF1' id='horaOFF1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF1'>MinutoOFF1:</label>\
+                        <select name='minutoOFF1' id='minutoOFF1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>";
+  
+  String preset2html = "<label for='horaON2'>HoraON2:</label>\
+                          <select name='horaON2' id='horaON2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON2'>MinutoON2:</label>\
+                        <select name='minutoON2' id='minutoON2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <label for='horaOFF2'>HoraOFF2:</label>\
+                          <select name='horaOFF2' id='horaOFF2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF2'>MinutoOFF2:</label>\
+                        <select name='minutoOFF2' id='minutoOFF2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>";
+
+String preset3html =     "<label for='horaON3'>HoraON3:</label>\
+                          <select name='horaON3' id='horaON3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON3'>MinutoON3:</label>\
+                        <select name='minutoON3' id='minutoON3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <label for='horaOFF3'>HoraOFF3:</label>\
+                          <select name='horaOFF3' id='horaOFF3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF3'>MinutoOFF3:</label>\
+                        <select name='minutoOFF3' id='minutoOFF3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>";
+
+String preset4html =     "<label for='horaON4'>HoraON4:</label>\
+                          <select name='horaON4' id='horaON4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON4'>MinutoON4:</label>\
+                        <select name='minutoON4' id='minutoON4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                        <label for='horaOFF4'>HoraOFF4:</label>\
+                          <select name='horaOFF4' id='horaOFF4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF4'>MinutoOFF4:</label>\
+                        <select name='minutoOFF4' id='minutoOFF4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <input type='checkbox' name='preset1' value='ON'>\
+                          <label for='preset1'> Activar preset 1</label><br>\
+                          <input type='checkbox' name='preset2' value='ON'>\
+                          <label for='preset2'> Activar preset 2</label><br>\
+                          <input type='checkbox' name='preset3' value='ON'>\
+                          <label for='preset3'> Activar preset 3</label><br>\
+                          <input type='checkbox' name='preset4' value='ON'>\
+                          <label for='preset4'> Activar preset 4</label><br>\
+                          <br>\
+                        <input type='submit' value='Aceptar'>\
+                      </form>";
+*/
+
+  // String prueba = "<p>hola</p><h1>La página rara</h1>";
+  // String htmlToSend = startHtml /* preset2html + preset3html + preset4html */ + endHtml;
+
+  // //server.send(200, "text/plain", "hello from esp32!");
+  // server.send(200, "text/html", htmlToSend);
+  // //delay(500);
+  // //digitalWrite(led, 0);
+
+}
+
+void handleRoot() {
+  //digitalWrite(led, 1);
+ /*
+  String htmlToSend = startHtml + "<form action = '/menu' method = 'POST'>\
+                        <label for='horaON1'>HoraON1:</label><br>\
+                        <input type='text' id='horaON1' name='horaON1' value=''><br>\
+                        <label for='minutoON1'>MinutoON1:</label><br>\
+                        <input type='text' id='minutoON1' name='minutoON1' value=''><br><br>\
+                        <label for='horaOFF1'>HoraOFF1:</label><br>\
+                        <input type='text' id='horaOFF1' name='horaOFF1' value=''><br>\
+                        <label for='minutoOFF1'>MinutoOFF1:</label><br>\
+                        <input type='text' id='minutoOFF1' name='minutoOFF1' value=''><br><br>\
+                        <input type='submit' value='Aceptar'>\
+                      </form>" + endHtml;
+*/
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
 String htmlToSend = startHtml + "<div class='autoMargin'>" +"<form action = '/menu' method = 'POST'>\
                         <fieldset>\
                         <legend>Preset 1</legend>\
@@ -586,9 +2188,761 @@ String htmlToSend = startHtml + "<div class='autoMargin'>" +"<form action = '/me
                       </form>" + "</div>" + endHtml;
                        
 
+<<<<<<< HEAD
   server.send(200, "text/html", htmlToSend);
 */
 
+=======
+/*
+String htmlToSend = startHtml + "<form action = '/menu' method = 'POST'>\
+                        <label for='horaON1'>HoraON1:</label>\
+                          <select name='horaON1' id='horaON1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON1'>MinutoON1:</label>\
+                        <select name='minutoON1' id='minutoON1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                        <label for='horaOFF1'>HoraOFF1:</label>\
+                          <select name='horaOFF1' id='horaOFF1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF1'>MinutoOFF1:</label>\
+                        <select name='minutoOFF1' id='minutoOFF1'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>\
+                          <label for='horaON2'>HoraON2:</label>\
+                          <select name='horaON2' id='horaON2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON2'>MinutoON2:</label>\
+                        <select name='minutoON2' id='minutoON2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <label for='horaOFF2'>HoraOFF2:</label>\
+                          <select name='horaOFF2' id='horaOFF2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF2'>MinutoOFF2:</label>\
+                        <select name='minutoOFF2' id='minutoOFF2'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>\
+                        <label for='horaON3'>HoraON3:</label>\
+                          <select name='horaON3' id='horaON3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON3'>MinutoON3:</label>\
+                        <select name='minutoON3' id='minutoON3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <label for='horaOFF3'>HoraOFF3:</label>\
+                          <select name='horaOFF3' id='horaOFF3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF3'>MinutoOFF3:</label>\
+                        <select name='minutoOFF3' id='minutoOFF3'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                          <br>\
+                          <label for='horaON4'>HoraON4:</label>\
+                          <select name='horaON4' id='horaON4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoON4'>MinutoON4:</label>\
+                        <select name='minutoON4' id='minutoON4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                        <label for='horaOFF4'>HoraOFF4:</label>\
+                          <select name='horaOFF4' id='horaOFF4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                          </select>\
+                        <label for='minutoOFF4'>MinutoOFF4:</label>\
+                        <select name='minutoOFF4' id='minutoOFF4'>\
+                            <option value='00'>00</option>\
+                            <option value='01'>01</option>\
+                            <option value='02'>02</option>\
+                            <option value='03'>03</option>\
+                            <option value='04'>04</option>\
+                            <option value='05'>05</option>\
+                            <option value='06'>06</option>\
+                            <option value='07'>07</option>\
+                            <option value='08'>08</option>\
+                            <option value='09'>09</option>\
+                            <option value='10'>10</option>\
+                            <option value='11'>11</option>\
+                            <option value='12'>12</option>\
+                            <option value='13'>13</option>\
+                            <option value='14'>14</option>\
+                            <option value='15'>15</option>\
+                            <option value='16'>16</option>\
+                            <option value='17'>17</option>\
+                            <option value='18'>18</option>\
+                            <option value='19'>19</option>\
+                            <option value='20'>20</option>\
+                            <option value='21'>21</option>\
+                            <option value='22'>22</option>\
+                            <option value='23'>23</option>\
+                            <option value='24'>24</option>\
+                            <option value='25'>25</option>\
+                            <option value='26'>26</option>\
+                            <option value='27'>27</option>\
+                            <option value='28'>28</option>\
+                            <option value='29'>29</option>\
+                            <option value='30'>30</option>\
+                            <option value='31'>31</option>\
+                            <option value='32'>32</option>\
+                            <option value='33'>33</option>\
+                            <option value='34'>34</option>\
+                            <option value='35'>35</option>\
+                            <option value='36'>36</option>\
+                            <option value='37'>37</option>\
+                            <option value='38'>38</option>\
+                            <option value='39'>39</option>\
+                            <option value='40'>40</option>\
+                            <option value='41'>41</option>\
+                            <option value='42'>42</option>\
+                            <option value='43'>43</option>\
+                            <option value='44'>44</option>\
+                            <option value='45'>45</option>\
+                            <option value='46'>46</option>\
+                            <option value='47'>47</option>\
+                            <option value='48'>48</option>\
+                            <option value='49'>49</option>\
+                            <option value='50'>50</option>\
+                            <option value='51'>51</option>\
+                            <option value='52'>52</option>\
+                            <option value='53'>53</option>\
+                            <option value='54'>54</option>\
+                            <option value='55'>55</option>\
+                            <option value='56'>56</option>\
+                            <option value='57'>57</option>\
+                            <option value='58'>58</option>\
+                            <option value='59'>59</option>\
+                          </select>\
+                          <br>\
+                        <input type='submit' value='Aceptar'>\
+                      </form>" + endHtml;
+*/
+  //String prueba = "<p>hola</p><h1>La página rara</h1>";
+  //String htmlToSend = startHtml + prueba + endHtml;
+
+  //server.send(200, "text/plain", "hello from esp32!");
+  server.send(200, "text/html", htmlToSend);
+  //delay(500);
+  //digitalWrite(led, 0);
+}
+
+
+void handleMenu() {
+  //digitalWrite(led, 1);
+  
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
   horaON1 = server.arg(0);
   minutoON1 = server.arg(1);
   horaOFF1 = server.arg(2);
@@ -634,6 +2988,17 @@ String htmlToSend = startHtml + "<div class='autoMargin'>" +"<form action = '/me
 		preset4 = "OFF";
 	}
 
+<<<<<<< HEAD
+=======
+/*
+  preset1 = server.arg(16);
+  
+  preset2 = server.arg(17);
+  preset3 = server.arg(18);
+  preset4 = server.arg(19);
+  */
+//String prueba = "hola";
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
 
 if(horaON1.length() == 1){
   horaON1 = "0" + horaON1;
@@ -660,7 +3025,60 @@ if(horaOFF4.length() == 1){
   horaOFF4 = "0" + horaOFF4;
 }
 
+<<<<<<< HEAD
 
+=======
+/*
+    if(horaON1 == "0"){
+      horaON1 = "00";
+    }
+    if(minutoON1 == "0"){
+      minutoON1 = "00";
+    }
+    if(horaON2 == "0"){
+      horaON2 = "00";
+    }
+    if(minutoON2 == "0"){
+      minutoON2 = "00";
+    }
+    if(horaON3 == "0"){
+      horaON3 = "00";
+    }
+    if(minutoON3 == "0"){
+      minutoON3 = "00";
+    }
+    if(horaON4 == "0"){
+      horaON4 = "00";
+    }
+    if(minutoON4 == "0"){
+      minutoON4 = "00";
+    }
+    if(horaOFF1 == "0"){
+      horaOFF1 = "00";
+    }
+    if(minutoOFF1 == "0"){
+      minutoOFF1 = "00";
+    }
+    if(horaOFF2 == "0"){
+      horaOFF2 = "00";
+    }
+    if(minutoOFF2 == "0"){
+      minutoOFF2 = "00";
+    }
+    if(horaOFF3 == "0"){
+      horaOFF3 = "00";
+    }
+    if(minutoOFF3 == "0"){
+      minutoOFF3 = "00";
+    }
+    if(horaOFF4 == "0"){
+      horaOFF4 = "00";
+    }
+    if(minutoOFF4 == "0"){
+      minutoOFF4 = "00";
+    }
+*/
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
   Serial.print("HoraON1 = ");
   Serial.println(horaON1);
   Serial.print("MinutoON1 = ");
@@ -790,10 +3208,17 @@ if(horaOFF4.length() == 1){
   }
 
 
+<<<<<<< HEAD
 	String botonConfigurar = "<form action = '/menu' method = 'POST'>\
                         <input type='submit' value='Configurar'>\	
                         </form><br>";
   	String botonResetear = "<form action = '/reset' method = 'POST'>\
+=======
+  String botonVolver = "<form action = '/' method = 'POST'>\
+                        <input type='submit' value='Volver'>\
+                        </form><br>";
+  String botonResetear = "<form action = '/reset' method = 'POST'>\
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
                         <input type='submit' value='Resetear'>\
                         </form>";
 
@@ -801,7 +3226,11 @@ if(horaOFF4.length() == 1){
   //String htmlToSend = startHtml + "<form action = '/' method = 'POST'><input type='submit' value='Volver'></form>" + endHtml;
   
   String htmlToSend = startHtml + 
+<<<<<<< HEAD
                       "<div class = 'autoMargin' ><h1>Info</h1><br><h2>Preset 1</h2><p>ON1: " +
+=======
+                      "<div class = 'autoMargin' ><h1>Menu</h1><br><h2>Preset 1</h2><p>ON1: " +
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
                       tiempoConfiguradoON1 + " ---- " + "OFF1: " + tiempoConfiguradoOFF1 + 
                       "</p>" + "<h2>Preset 2</h2><p>ON2: " + tiempoConfiguradoON2 + 
                       " ---- " + "OFF2: " + tiempoConfiguradoOFF2 + "</p>" + 
@@ -809,6 +3238,7 @@ if(horaOFF4.length() == 1){
                       " ---- " + "OFF3: " + tiempoConfiguradoOFF3 + "</p>" + 
                       "<h2>Preset 4</h2><p>ON4: " + tiempoConfiguradoON4 + 
                       " ---- " + "OFF4: " + tiempoConfiguradoOFF4 + "</p><br>" +
+<<<<<<< HEAD
                       botonConfigurar + "<br>" + botonResetear + "</div>" + endHtml;
 
                       
@@ -977,10 +3407,17 @@ void handleMenu() {
 
 
   server.send(200, "text/html", htmlToSend);
+=======
+                      botonVolver + "<br>" + botonResetear + "</div>" + endHtml;
+
+                      
+  server.send(200, "text/html", htmlToSend);
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
   //delay(500);
   //digitalWrite(led, 0);
 }
 
+<<<<<<< HEAD
 
 void handleMenu_old() {
   
@@ -1088,6 +3525,8 @@ void handleMenu_old() {
   //delay(500);
   //digitalWrite(led, 0);
 }
+=======
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
 void handleReset(){
 
   tiempoConfiguradoON1 = "--:--:--";
@@ -1126,12 +3565,19 @@ void handleReset(){
                         <input type='submit' value='Volver'>\
                         </form>";
 
+<<<<<<< HEAD
   String htmlToSend = startHtml + "<div class='autoMargin'>" + "<h1>Reset</h1>" +"<p>Se han reseteado las configuraciones</p><br>" +  botonVolver + "</div>"  +  endHtml;
+=======
+  String htmlToSend = startHtml + "<p>Resetear configuraciones</p>" + botonVolver +  endHtml;
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
   server.send(200, "text/html", htmlToSend);
 
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
 void handleNotFound() {
   digitalWrite(led, 1);
 
@@ -1419,6 +3865,7 @@ void setup_wifi(void){
     Serial.println(WiFi.localIP());
 */
  //  WiFiManager wm;
+<<<<<<< HEAD
 /*
    // Configures static IP address
   if (!WiFi.config(local_IP2, gateway, subnet, primaryDNS, secondaryDNS)) {
@@ -1426,6 +3873,8 @@ void setup_wifi(void){
 	//WiFi.config(local_IP2, gateway, subnet, primaryDNS, secondaryDNS);
   }
 */
+=======
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
  
    bool res;
  
@@ -1536,6 +3985,7 @@ void cambioDeParametros(void){
     }
   }
 
+<<<<<<< HEAD
 }
 
 void cambiarConfigMQTT(uint8_t numSensor){
@@ -1585,4 +4035,6 @@ void comprobarConexion(void){
 
   setupModoRed();//configura MQTT, revisa conectividad
  
+=======
+>>>>>>> a0f134e985b5d61f5d4cc72d27e5551a1065dd96
 }
