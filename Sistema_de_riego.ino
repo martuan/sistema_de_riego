@@ -121,8 +121,8 @@ char flagProceso1 = 0;
 char flagProceso2 = 0;
 int contadorProceso1 = 0;
 int contadorProceso2 = 0;
-int tiempo1 = 1;
-int tiempo2 = 1;
+int tiempo1 = 1;//segundos
+int tiempo2 = 60;//segundos
 int milisegundos = 1000;//1 segundo
 
 
@@ -358,7 +358,12 @@ void loop(){
 
     }
 
+    if(flagProceso2 && flagConexionOK == 0){//si el timer alcanzó el tiempo para chequear la conexión
+        Serial.println("flagProceso2");
+        flagProceso2 = 0;
 
+        setupModoRed();
+    }
     /*
     if(flagProceso2){//si el timer alcanzó el tiempo para apagar la electroválvula
         Serial.println("flagProceso2");
