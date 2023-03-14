@@ -194,9 +194,9 @@ const int led = 4;
 //************ FUNCIONES *****************
 
 
-void accionarSalidas(void);
-void writeString(char add,String data);
-String read_String(char add);
+//void accionarSalidas(void);
+//void writeString(char add,String data);
+//String read_String(char add);
 void handleNotFound (void);
 void handleMenu(void);
 void handleRoot(void);
@@ -255,6 +255,10 @@ void setup(){
     timerAlarmWrite(timer, milisegundos * 1000, true);//valor en microsegundos
     timerAlarmEnable(timer);
 
+
+    cargarDesdeEEPROM();
+
+
     setupModoRed();
 
     //init and get the time
@@ -270,7 +274,7 @@ void setup(){
     tiempoConfiguradoOFF4 = "";
   */  
 
-    cargarDesdeEEPROM();
+    
 
    
     if (MDNS.begin("esp32")) {
@@ -386,9 +390,12 @@ void loop(){
 		flagProceso2 = 0;
 
 		if(client1.connected()){
-        	publicarKeepAlive();
-      	}
+      publicarKeepAlive();
+    }else{//si no pudo publicar, no está bien la conexión
+      flagConexionOK = 0;
+    }
 
+    
 		if(flagConexionOK == 0){//si perdió la conexión
 
 			Serial.println("Intentando recuperar la conexión");
@@ -433,15 +440,15 @@ void loop(){
     
 }
 
-void accionarSalidas(void){
+// void accionarSalidas(void){
 
 
-        digitalWrite(OUTPUT1, HIGH);
-        delay(2000);
-        digitalWrite(OUTPUT1, LOW);
+//         digitalWrite(OUTPUT1, HIGH);
+//         delay(2000);
+//         digitalWrite(OUTPUT1, LOW);
         
 
-}
+// }
 
 //realiza la lectura del timestamp desde el server ntp
 void obtenerFechaHora(void){
