@@ -128,13 +128,19 @@ String preset4 = {};
 
 
 char flagTimer = 0;
+char flagModoRiegoWebserver = 1;//0;//1;
 int contadorTimer = 0;
 char flagProceso1 = 0;
 char flagProceso2 = 0;
+char flagProceso3 = 0;
 int contadorProceso1 = 0;
 int contadorProceso2 = 0;
-int tiempo1 = 1;
-int tiempo2 = 60;
+int contadorProceso3 = 0;
+int tiempo1 = 1;//segundos
+int tiempo2 = 60;//segundos
+int tiempo3 = 60;//60;//3600;//segundos
+int minutosTimer = 1;
+int cuentaMinutos = 0;
 int milisegundos = 1000;//1 segundo
 String macAdd = {};
 char msgKeepAlive[150] = {};
@@ -208,6 +214,7 @@ void IRAM_ATTR onTimer() {
 
     contadorProceso1++;
     contadorProceso2++;
+    contadorProceso3++;
 
     if(contadorProceso1 == tiempo1){//proceso 1
         contadorProceso1 = 0;//resetea el contador
@@ -220,6 +227,12 @@ void IRAM_ATTR onTimer() {
         flagProceso2 = 1; 
         //Serial.println("flagProceso2");
     }
+    if(contadorProceso3 == tiempo3){
+      contadorProceso3 = 0;//resetea el contador
+      flagProceso3 = 1; 
+
+
+    }
 }
 
 void setup(){
@@ -230,9 +243,9 @@ void setup(){
 
     SerialBT.begin("riegoARG"); //Bluetooth device name
 
-	macAdd = WiFi.macAddress();
+	  macAdd = WiFi.macAddress();
     Serial.println( "MAC address: " + macAdd );
-	cambiarConfigMQTT(1);
+	  cambiarConfigMQTT(1);
     
     
     pinMode(OUTPUT1, OUTPUT);
@@ -312,7 +325,9 @@ void loop(){
 
     cambioDeParametros();
 
-    if(flagProceso1){//si el timer alcanzó el tiempo para encender la electroválvula
+    if(flagModoRiegoWebserver == 1){//si está en modo riego por webserver
+
+      if(flagProceso1){//si el timer alcanzó el tiempo para encender la electroválvula
         Serial.println("flagProceso1");
         flagProceso1 = 0;
         
@@ -381,38 +396,75 @@ void loop(){
 
         }
 
-    }
+      }
 
 
-	if(flagProceso2){//chequea cada cierto tiempo la conexión
+      if(flagProceso2){//chequea cada cierto tiempo la conexión
 
-		Serial.println("flagProceso2");
-		flagProceso2 = 0;
+        Serial.println("flagProceso2");
+        flagProceso2 = 0;
 
-		if(client1.connected()){
-      publicarKeepAlive();
-    }else{//si no pudo publicar, no está bien la conexión
-      flagConexionOK = 0;
+        if(client1.connected()){
+          publicarKeepAlive();
+        }else{//si no pudo publicar, no está bien la conexión
+          flagConexionOK = 0;
+        }
+
+        
+        if(flagConexionOK == 0){//si perdió la conexión
+
+          Serial.println("Intentando recuperar la conexión");
+          comprobarConexion();//si alguna conexión se perdió, la reestablece
+          if(flagConexionOK){//si la recuperó
+            Serial.print("Se ha recuperado la conexión. flagConexionOK = ");
+            Serial.println(flagConexionOK);
+          }else{//si no la recuperó
+          
+            Serial.print("[PROBLEMAS] No se ha recuperado la conexión. flagConexionOK = ");
+            Serial.println(flagConexionOK);
+          }
+
+        }      
+      }
+
+
+    }else{//si está en modo riego por timer
+      //Serial.println("esperando timer");
+      if(flagProceso3){//si alcanzó el tiempo del timer para regar
+        flagProceso3 = 0;//resetea el flag 
+          SerialBT.print("riego por timer - minutosTimer = ");
+          SerialBT.println(minutosTimer);
+          SerialBT.print("cuentaMinutos = ");
+          SerialBT.println(cuentaMinutos);
+          Serial.print("riego por timer - minutosTimer = ");
+          Serial.println(minutosTimer);
+          Serial.print("cuentaMinutos = ");
+          Serial.println(cuentaMinutos);
+
+          if(cuentaMinutos == minutosTimer){
+
+            digitalWrite(OUTPUT1, LOW);//logica inversa
+            //digitalWrite(LED_PRESET3, LOW);//LED para mostrar encendido
+            Serial.println("ON");
+            SerialBT.println("ON");
+            delay(60000);
+            //delay(10000);
+            digitalWrite(OUTPUT1, HIGH);//logica inversa
+            Serial.println("OFF");
+            SerialBT.println("OFF");
+
+
+            cuentaMinutos = 0;
+          }
+
+          cuentaMinutos++;
+          
+
+      }
+
     }
 
     
-		if(flagConexionOK == 0){//si perdió la conexión
-
-			Serial.println("Intentando recuperar la conexión");
-			comprobarConexion();//si alguna conexión se perdió, la reestablece
-			if(flagConexionOK){//si la recuperó
-				Serial.print("Se ha recuperado la conexión. flagConexionOK = ");
-				Serial.println(flagConexionOK);
-			}else{//si no la recuperó
-			
-				Serial.print("[PROBLEMAS] No se ha recuperado la conexión. flagConexionOK = ");
-				Serial.println(flagConexionOK);
-			}
-
-		}
-
-		
-	}
 
 
 
@@ -482,7 +534,8 @@ void obtenerFechaHora(void){
       strcat(fechaHora, ":");
       strcat(fechaHora, timeSecond);
 
-      tiempoActual = String(timeHour24) + ":" + String(timeMinute) + ":" + String(timeSecond);
+      //tiempoActual = String(timeHour24) + ":" + String(timeMinute) + ":" + String(timeSecond);
+      tiempoActual = String(timeHour24) + ":" + String(timeMinute);
 
   }
 }
@@ -742,8 +795,10 @@ if(horaOFF4.length() == 1){
   if(preset1 == "ON"){
 
 
-    tiempoConfiguradoON1 = horaON1 + ":" + minutoON1 + ":" + "00";
-    tiempoConfiguradoOFF1 = horaOFF1 + ":" + minutoOFF1 + ":" + "00";
+    //tiempoConfiguradoON1 = horaON1 + ":" + minutoON1 + ":" + "00";
+    //tiempoConfiguradoOFF1 = horaOFF1 + ":" + minutoOFF1 + ":" + "00";
+    tiempoConfiguradoON1 = horaON1 + ":" + minutoON1;
+    tiempoConfiguradoOFF1 = horaOFF1 + ":" + minutoOFF1;
 
     EEPROM.writeString(EEPROM_tiempoConfiguradoON1, tiempoConfiguradoON1);
     EEPROM.commit();
@@ -759,9 +814,10 @@ if(horaOFF4.length() == 1){
   }
   if(preset2 == "ON"){
 
-    tiempoConfiguradoON2 = horaON2 + ":" + minutoON2 + ":" + "00";
-    tiempoConfiguradoOFF2 = horaOFF2 + ":" + minutoOFF2 + ":" + "00";
-
+    // tiempoConfiguradoON2 = horaON2 + ":" + minutoON2 + ":" + "00";
+    // tiempoConfiguradoOFF2 = horaOFF2 + ":" + minutoOFF2 + ":" + "00";
+    tiempoConfiguradoON2 = horaON2 + ":" + minutoON2;
+    tiempoConfiguradoOFF2 = horaOFF2 + ":" + minutoOFF2;
 
     EEPROM.writeString(EEPROM_tiempoConfiguradoON2, tiempoConfiguradoON2);
     EEPROM.commit();
@@ -776,8 +832,10 @@ if(horaOFF4.length() == 1){
   }
   if(preset3 == "ON"){
  
-    tiempoConfiguradoON3 = horaON3 + ":" + minutoON3 + ":" + "00";
-    tiempoConfiguradoOFF3 = horaOFF3 + ":" + minutoOFF3 + ":" + "00";
+    //tiempoConfiguradoON3 = horaON3 + ":" + minutoON3 + ":" + "00";
+    //tiempoConfiguradoOFF3 = horaOFF3 + ":" + minutoOFF3 + ":" + "00";
+    tiempoConfiguradoON3 = horaON3 + ":" + minutoON3;
+    tiempoConfiguradoOFF3 = horaOFF3 + ":" + minutoOFF3;
 
     EEPROM.writeString(EEPROM_tiempoConfiguradoON3, tiempoConfiguradoON3);
     EEPROM.commit();
@@ -793,8 +851,10 @@ if(horaOFF4.length() == 1){
   }
   if(preset4 == "ON"){
 
-    tiempoConfiguradoON4 = horaON4 + ":" + minutoON4 + ":" + "00";
-    tiempoConfiguradoOFF4 = horaOFF4 + ":" + minutoOFF4 + ":" + "00";
+    //tiempoConfiguradoON4 = horaON4 + ":" + minutoON4 + ":" + "00";
+    //tiempoConfiguradoOFF4 = horaOFF4 + ":" + minutoOFF4 + ":" + "00";
+    tiempoConfiguradoON4 = horaON4 + ":" + minutoON4;
+    tiempoConfiguradoOFF4 = horaOFF4 + ":" + minutoOFF4;
     
     EEPROM.writeString(EEPROM_tiempoConfiguradoON4, tiempoConfiguradoON4);
     EEPROM.commit();
@@ -1412,6 +1472,21 @@ void switchCaseParametros(char charParamID, String valorParam){
     case 'F'://finaliza riego
       digitalWrite(OUTPUT1, HIGH);//lógica inversa
       Serial.println("Finaliza riego por MQTT");
+    break;
+    case 'M'://modo TIMER
+      flagModoRiegoWebserver = 0;
+      
+      Serial.println("Riego por Timer");
+    break;
+    case 'S'://modo WEBSERVER
+      flagModoRiegoWebserver = 1;
+      Serial.println("Riego por Webserver");
+    break;
+    case 't'://tiempo del timer
+      minutosTimer = valorParam.toInt();
+      cuentaMinutos = 0;
+      Serial.print("minutos del timer = ");
+      Serial.println(minutosTimer);
     break;
     default:
       Serial.println("Parámetro incorrecto");
