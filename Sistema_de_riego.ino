@@ -21,6 +21,8 @@
 #define LED_PRESET4 19
 #define INPUT_SENSOR_HUM 36
 
+#define UMBRAL_HUMEDAD 50
+
 
 #define LED_ONBOARD 2 //On Board LED
 
@@ -129,6 +131,7 @@ String preset4 = {};
 
 char flagTimer = 0;
 char flagModoRiegoWebserver = 1;//0;//1;
+char flagSensorHumedadHabilitado = 0;
 int contadorTimer = 0;
 char flagProceso1 = 0;
 char flagProceso2 = 0;
@@ -144,6 +147,7 @@ int cuentaMinutos = 0;
 int milisegundos = 1000;//1 segundo
 String macAdd = {};
 char msgKeepAlive[150] = {};
+float humedad = 0.0;
 
 
 //Servidor en la nube
@@ -325,144 +329,163 @@ void loop(){
 
     cambioDeParametros();
 
-    if(flagModoRiegoWebserver == 1){//si está en modo riego por webserver
+    if(flagSensorHumedadHabilitado){
 
-      if(flagProceso1){//si el timer alcanzó el tiempo para encender la electroválvula
-        Serial.println("flagProceso1");
-        flagProceso1 = 0;
-        
-        
-        //digitalWrite(FLASH, HIGH);
-        //accionarSalidas();
-        obtenerFechaHora();
-        Serial.println(fechaHora);
-        Serial.println(tiempoActual);
-        
-        if(tiempoActual == tiempoConfiguradoON1 && preset1 == "ON"){
+      humedad = 10.0;//medir humedad
+      Serial.print("Humedad = ");
+      Serial.println(humedad);
 
-          digitalWrite(OUTPUT1, LOW);//logica inversa
-          digitalWrite(LED_PRESET1, HIGH);//LED para mostrar encendido
-          Serial.println("ON1");
-          client1.publish(root_topic_publish, "ON1");
+      if(humedad < UMBRAL_HUMEDAD){//si está seco o con baja humedad, regar
 
-        }else if(tiempoActual == tiempoConfiguradoOFF1 && preset1 == "ON"){
+         if(flagModoRiegoWebserver == 1){//si está en modo riego por webserver
 
-          digitalWrite(OUTPUT1, HIGH);//logica inversa
-          digitalWrite(LED_PRESET1, LOW);//LED para mostrar encendido
-          Serial.println("OFF1");
-          client1.publish(root_topic_publish, "OFF1");
+          if(flagProceso1){//si el timer alcanzó el tiempo para encender la electroválvula
+            Serial.println("flagProceso1");
+            flagProceso1 = 0;
+            
+            
+            //digitalWrite(FLASH, HIGH);
+            //accionarSalidas();
+            obtenerFechaHora();
+            Serial.println(fechaHora);
+            Serial.println(tiempoActual);
+            
+            if(tiempoActual == tiempoConfiguradoON1 && preset1 == "ON"){
 
-        }else if(tiempoActual == tiempoConfiguradoON2 && preset2 == "ON"){
+              digitalWrite(OUTPUT1, LOW);//logica inversa
+              digitalWrite(LED_PRESET1, HIGH);//LED para mostrar encendido
+              Serial.println("ON1");
+              client1.publish(root_topic_publish, "ON1");
 
-          digitalWrite(OUTPUT1, LOW);//logica inversa
-          digitalWrite(LED_PRESET2, HIGH);//LED para mostrar encendido
-          Serial.println("ON2");
-          client1.publish(root_topic_publish, "ON2");
+            }else if(tiempoActual == tiempoConfiguradoOFF1 && preset1 == "ON"){
 
-        }else if(tiempoActual == tiempoConfiguradoOFF2 && preset2 == "ON"){
+              digitalWrite(OUTPUT1, HIGH);//logica inversa
+              digitalWrite(LED_PRESET1, LOW);//LED para mostrar encendido
+              Serial.println("OFF1");
+              client1.publish(root_topic_publish, "OFF1");
 
-          digitalWrite(OUTPUT1, HIGH);//logica inversa
-          digitalWrite(LED_PRESET2, LOW);//LED para mostrar encendido
-          Serial.println("OFF2");
-          client1.publish(root_topic_publish, "OFF2");
+            }else if(tiempoActual == tiempoConfiguradoON2 && preset2 == "ON"){
 
-        }else if(tiempoActual == tiempoConfiguradoON3 && preset3 == "ON"){
+              digitalWrite(OUTPUT1, LOW);//logica inversa
+              digitalWrite(LED_PRESET2, HIGH);//LED para mostrar encendido
+              Serial.println("ON2");
+              client1.publish(root_topic_publish, "ON2");
 
-          digitalWrite(OUTPUT1, LOW);//logica inversa
-          digitalWrite(LED_PRESET3, HIGH);//LED para mostrar encendido
-          Serial.println("ON3");
-          client1.publish(root_topic_publish, "ON3");
+            }else if(tiempoActual == tiempoConfiguradoOFF2 && preset2 == "ON"){
 
-        }else if(tiempoActual == tiempoConfiguradoOFF3 && preset3 == "ON"){
+              digitalWrite(OUTPUT1, HIGH);//logica inversa
+              digitalWrite(LED_PRESET2, LOW);//LED para mostrar encendido
+              Serial.println("OFF2");
+              client1.publish(root_topic_publish, "OFF2");
 
-          digitalWrite(OUTPUT1, HIGH);//logica inversa
-          digitalWrite(LED_PRESET3, LOW);//LED para mostrar encendido
-          Serial.println("OFF3");
-          client1.publish(root_topic_publish, "OFF3");
+            }else if(tiempoActual == tiempoConfiguradoON3 && preset3 == "ON"){
 
-        }else if(tiempoActual == tiempoConfiguradoON4 && preset4 == "ON"){
+              digitalWrite(OUTPUT1, LOW);//logica inversa
+              digitalWrite(LED_PRESET3, HIGH);//LED para mostrar encendido
+              Serial.println("ON3");
+              client1.publish(root_topic_publish, "ON3");
 
-          digitalWrite(OUTPUT1, LOW);//logica inversa
-          digitalWrite(LED_PRESET4, HIGH);//LED para mostrar encendido
-          Serial.println("ON4");
-          client1.publish(root_topic_publish, "ON4");
+            }else if(tiempoActual == tiempoConfiguradoOFF3 && preset3 == "ON"){
 
-        }else if(tiempoActual == tiempoConfiguradoOFF4 && preset4 == "ON"){
+              digitalWrite(OUTPUT1, HIGH);//logica inversa
+              digitalWrite(LED_PRESET3, LOW);//LED para mostrar encendido
+              Serial.println("OFF3");
+              client1.publish(root_topic_publish, "OFF3");
 
-          digitalWrite(OUTPUT1, HIGH);//logica inversa
-          digitalWrite(LED_PRESET4, LOW);//LED para mostrar encendido
-          Serial.println("OFF4");
-          client1.publish(root_topic_publish, "OFF4");
+            }else if(tiempoActual == tiempoConfiguradoON4 && preset4 == "ON"){
+
+              digitalWrite(OUTPUT1, LOW);//logica inversa
+              digitalWrite(LED_PRESET4, HIGH);//LED para mostrar encendido
+              Serial.println("ON4");
+              client1.publish(root_topic_publish, "ON4");
+
+            }else if(tiempoActual == tiempoConfiguradoOFF4 && preset4 == "ON"){
+
+              digitalWrite(OUTPUT1, HIGH);//logica inversa
+              digitalWrite(LED_PRESET4, LOW);//LED para mostrar encendido
+              Serial.println("OFF4");
+              client1.publish(root_topic_publish, "OFF4");
+
+            }
+
+          }
+
+
+          if(flagProceso2){//chequea cada cierto tiempo la conexión
+
+            Serial.println("flagProceso2");
+            flagProceso2 = 0;
+
+            if(client1.connected()){
+              publicarKeepAlive();
+            }else{//si no pudo publicar, no está bien la conexión
+              flagConexionOK = 0;
+            }
+
+            
+            if(flagConexionOK == 0){//si perdió la conexión
+
+              Serial.println("Intentando recuperar la conexión");
+              comprobarConexion();//si alguna conexión se perdió, la reestablece
+              if(flagConexionOK){//si la recuperó
+                Serial.print("Se ha recuperado la conexión. flagConexionOK = ");
+                Serial.println(flagConexionOK);
+              }else{//si no la recuperó
+              
+                Serial.print("[PROBLEMAS] No se ha recuperado la conexión. flagConexionOK = ");
+                Serial.println(flagConexionOK);
+              }
+
+            }      
+          }
+
+
+        }else{//si está en modo riego por timer
+          //Serial.println("esperando timer");
+          if(flagProceso3){//si alcanzó el tiempo del timer para regar
+            flagProceso3 = 0;//resetea el flag 
+              SerialBT.print("riego por timer - minutosTimer = ");
+              SerialBT.println(minutosTimer);
+              SerialBT.print("cuentaMinutos = ");
+              SerialBT.println(cuentaMinutos);
+              Serial.print("riego por timer - minutosTimer = ");
+              Serial.println(minutosTimer);
+              Serial.print("cuentaMinutos = ");
+              Serial.println(cuentaMinutos);
+
+              if(cuentaMinutos == minutosTimer){
+
+                digitalWrite(OUTPUT1, LOW);//logica inversa
+                //digitalWrite(LED_PRESET3, LOW);//LED para mostrar encendido
+                Serial.println("ON");
+                SerialBT.println("ON");
+                delay(60000);
+                //delay(10000);
+                digitalWrite(OUTPUT1, HIGH);//logica inversa
+                Serial.println("OFF");
+                SerialBT.println("OFF");
+
+
+                cuentaMinutos = 0;
+              }
+
+              cuentaMinutos++;
+              
+
+          }
 
         }
 
+
+
+      }else{
+        Serial.println("No hace falta regar");
       }
-
-
-      if(flagProceso2){//chequea cada cierto tiempo la conexión
-
-        Serial.println("flagProceso2");
-        flagProceso2 = 0;
-
-        if(client1.connected()){
-          publicarKeepAlive();
-        }else{//si no pudo publicar, no está bien la conexión
-          flagConexionOK = 0;
-        }
-
-        
-        if(flagConexionOK == 0){//si perdió la conexión
-
-          Serial.println("Intentando recuperar la conexión");
-          comprobarConexion();//si alguna conexión se perdió, la reestablece
-          if(flagConexionOK){//si la recuperó
-            Serial.print("Se ha recuperado la conexión. flagConexionOK = ");
-            Serial.println(flagConexionOK);
-          }else{//si no la recuperó
-          
-            Serial.print("[PROBLEMAS] No se ha recuperado la conexión. flagConexionOK = ");
-            Serial.println(flagConexionOK);
-          }
-
-        }      
-      }
-
-
-    }else{//si está en modo riego por timer
-      //Serial.println("esperando timer");
-      if(flagProceso3){//si alcanzó el tiempo del timer para regar
-        flagProceso3 = 0;//resetea el flag 
-          SerialBT.print("riego por timer - minutosTimer = ");
-          SerialBT.println(minutosTimer);
-          SerialBT.print("cuentaMinutos = ");
-          SerialBT.println(cuentaMinutos);
-          Serial.print("riego por timer - minutosTimer = ");
-          Serial.println(minutosTimer);
-          Serial.print("cuentaMinutos = ");
-          Serial.println(cuentaMinutos);
-
-          if(cuentaMinutos == minutosTimer){
-
-            digitalWrite(OUTPUT1, LOW);//logica inversa
-            //digitalWrite(LED_PRESET3, LOW);//LED para mostrar encendido
-            Serial.println("ON");
-            SerialBT.println("ON");
-            delay(60000);
-            //delay(10000);
-            digitalWrite(OUTPUT1, HIGH);//logica inversa
-            Serial.println("OFF");
-            SerialBT.println("OFF");
-
-
-            cuentaMinutos = 0;
-          }
-
-          cuentaMinutos++;
-          
-
-      }
+      delay(10000);
 
     }
+
+   
 
     
 
@@ -1488,6 +1511,11 @@ void switchCaseParametros(char charParamID, String valorParam){
       Serial.print("minutos del timer = ");
       Serial.println(minutosTimer);
     break;
+    case 'H'://tiempo del timer
+      flagSensorHumedadHabilitado = valorParam.toInt();
+      Serial.print("flagSensorHumedadHabilitado = ");
+      Serial.println(flagSensorHumedadHabilitado);
+    break;
     default:
       Serial.println("Parámetro incorrecto");
     break;
@@ -1698,6 +1726,7 @@ void publicarKeepAlive(void){
   strcat(msgKeepAlive, "...Estoy vivo. ");
 
   strcat(msgKeepAlive, keepAlive_topic_publish);
+  strcat(msgKeepAlive, fechaHora);
 
   client1.publish(keepAlive_topic_publish, msgKeepAlive);
   Serial.println(keepAlive_topic_publish);
